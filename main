@@ -1,0 +1,113 @@
+NAME_W = 15
+DAILY_W = 15
+MONTHLY_W = 20
+
+
+class Appliance():
+    def __init__(self, name : str, power_kw : float, hours_per_day : float):
+        self.name = name
+        self.power_kw = power_kw
+        self.hours_per_day = hours_per_day
+        
+    def daily_energy_kwh(self):
+        return self.power_kw * self.hours_per_day
+        
+    def monthly_energy_kwh(self, days = 30):
+        return self.daily_energy_kwh() * days
+        
+    def monthly_cost(self, price_per_kwh = 0.33):
+        return self.monthly_energy_kwh() * price_per_kwh
+        
+    def __str__(self):
+        return (
+            f"{self.name:<{NAME_W}}"
+            f"{self.daily_energy_kwh():^{DAILY_W}.2f}"
+            f"{self.monthly_cost():^{MONTHLY_W}.2f}"
+        )
+        
+        
+def get_appliance_inputs():
+    
+    #name
+    name = input("Enter appliance name (or 'done'): ").strip()
+    if name.lower() == 'done':
+        return None
+        
+    while not name.isalpha():
+        print("Name must contain letters only")
+        name = input("Enter appliance name (or 'done'): ").strip()
+        if name.lower() == 'done':
+            return None
+            
+        
+    
+        
+    #power
+    while True:
+        power = input("Enter power in kW: ").strip()
+        if power.lower() == 'done':
+            return None
+        try:
+            power = float(power)
+            break
+        except ValueError:
+            print("Power must be a number")
+        
+            
+            
+    # hours
+    while True:
+        hours = input("Enter daily hours: ").strip()
+        if hours.lower() == 'done':
+            return None
+        try:
+            hours = float(hours)
+            break
+        except ValueError:
+            print("Hours must be a number")
+
+    return name, power, hours
+        
+        
+
+def main():
+    
+    print("Calculate your appliances monthly cost in €    |   Type 'DONE' when you finish with your appliances\n")
+    
+    appliances = []
+    monthly_costs = []
+    total_monthly_costs = 0
+
+    while True:
+        appliance_inputs = get_appliance_inputs()
+        if appliance_inputs is None:
+            break
+        else:
+            appliance = Appliance(*appliance_inputs)
+            appliances.append(appliance)
+        
+
+    if not appliances:
+        print("No appliances entered.")
+        return
+
+
+    print()
+    print(f"{'Name':<{NAME_W}}{'Daily kWh':^{DAILY_W}}{'Monthly € (30d)':^{MONTHLY_W}}")
+    print(("-" * 50))
+
+    for appliance in appliances:
+        print(appliance)
+        monthly_costs.append(appliance.monthly_cost())
+    
+    total_monthly_costs = sum(monthly_costs)
+    
+    print("-" * 50)
+    print("-" * 50)
+    print(f"{'Total =':>45}{total_monthly_costs:>5.2f}")
+    
+        
+        
+        
+        
+main()
